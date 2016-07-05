@@ -2,6 +2,7 @@ package wslf.homemoviebase.db.collections;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoDatabase;
+import java.util.regex.Pattern;
 import org.bson.Document;
 
 /**
@@ -19,7 +20,7 @@ public class People extends Collection {
      */
     private static final String NAME_FIELD = "name";
     private static final String FULL_NAME_FIELD = "full name";
-
+    
     public People(MongoDatabase database) {
         super(database);
     }
@@ -33,14 +34,14 @@ public class People extends Collection {
      */
     private boolean addNew(String name, String fullName) {
         try {
-            Document human = new Document(NAME_FIELD, name)
-                    .append(FULL_NAME_FIELD, fullName);
+            Document human = new Document(NAME_FIELD, "#"+name+"#")
+                    .append(FULL_NAME_FIELD, "#"+fullName+"#");
             collection.insertOne(human);
         } catch (Exception ex) {
             System.err.println("db error!\n" + ex.toString());
             return false;
         }
-
+        
         return true;
     }
 
@@ -61,7 +62,8 @@ public class People extends Collection {
      * @return existence
      */
     public boolean exists(String fullName) {
-        return collection.count(new Document(FULL_NAME_FIELD, fullName)) > 0;
+        Document query = getFullNameQuery(fullName);
+        return collection.count(query) > 0;
     }
 
     /**
@@ -71,7 +73,7 @@ public class People extends Collection {
      * @return numver of humans with this name
      */
     public int count(String name) {
-        return (int) collection.count(new Document(NAME_FIELD, name));
+        return (int) collection.count(getNameQuery(name));
     }
 
     /**
@@ -85,25 +87,43 @@ public class People extends Collection {
         if (!exists(fullName)) {
             addNew(name, fullName);
         }
-
-        FindIterable<Document> iterable = collection.find(new Document(FULL_NAME_FIELD, fullName));
+        
+        FindIterable<Document> iterable = collection.find(getFullNameQuery(fullName));
         return iterable.first();
     }
 
     /**
      * getting human with specified name, if possible
      *
-     * @param name name
+     * @param name short or full name
      * @return document that contains requested human or nill if doesn't exist
      * human with specified name or exists more than 1 human with requested
      * short name
      */
     public Document get(String name) {
-        if (count(name) == 1) {
-            FindIterable<Document> iterable = collection.find(new Document(NAME_FIELD, name));
+        if (exists(name)) {
+            FindIterable<Document> iterable = collection.find(getFullNameQuery(name));
             return iterable.first();
         }
-
+        
+        if (count(name) == 1) {
+            FindIterable<Document> iterable = collection.find(getNameQuery(name));
+            return iterable.first();
+        }
+        
         return null;
+    }
+    
+    private Document getNameQuery(String name) {
+        Document query = new Document(NAME_FIELD, Pattern.compile("#"+name+"#", Pattern.CASE_INSENSITIVE));
+        //Document query = new Document(NAME_FIELD, new Document("$regex", name));
+        //query.append("$options", "i");
+        return query;
+    }
+    
+    private Document getFullNameQuery(String fullName) {
+        Document query = new Document(FULL_NAME_FIELD, Pattern.compile("#"+fullName+"#", Pattern.CASE_INSENSITIVE));
+        //query.append("$options", "i");
+        return query;
     }
 }
