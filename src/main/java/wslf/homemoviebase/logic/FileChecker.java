@@ -1,21 +1,19 @@
 package wslf.homemoviebase.logic;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.util.Pair;
-import javax.xml.bind.DatatypeConverter;
 import wslf.homemoviebase.db.MongoDB;
+
+import static wslf.homemoviebase.logic.Constants.*;
 
 /**
  *
@@ -27,13 +25,38 @@ public class FileChecker {
      * object to work with db
      */
     private final MongoDB mongoDB;
-    /**
-     * Maximum files size to load whole it to the RAM. in bytes
-     */
-    private static final long MAX_SIZE_IN_RAM = 256 * 1024 * 1024; // 256 MB
 
     public FileChecker(MongoDB mongoDB) {
         this.mongoDB = mongoDB;
+    }
+
+    /**
+     * Looking for the similar files that alredy in the db
+     *
+     * @param folderPath path to folder, that stored video files
+     * @return dublicats: List of pairs<input file path, same file in db path>
+     */
+    public LinkedList<Pair<String, String>> check(String folderPath) {
+        try {
+            List<String> files = new LinkedList<>();
+
+            Files.walk(Paths.get(folderPath))
+                    .filter(Files::isRegularFile)
+                    .forEach(filePath -> {
+                        for (String dataType : DATA_TYPES) {
+                            if (filePath.toString().endsWith(dataType)) {
+                                files.add(filePath.toString());
+                                break;
+                            }
+                        }
+                    });
+
+            return check(files);
+        } catch (IOException ex) {
+            Logger.getLogger(FileChecker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
     }
 
     /**
@@ -60,7 +83,7 @@ public class FileChecker {
     }
 
     /**
-     * calculate file hash: "size_MD5FileHash"
+     * calculate file hash: "size"
      *
      * @param path path to the file
      * @return hash
@@ -68,12 +91,8 @@ public class FileChecker {
     private String getFileHash(String path) {
         try {
             long fileSize = Files.size(Paths.get(path));
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(Files.readAllBytes(Paths.get(path)));
-            byte[] digest = md.digest();
-            String fileHash = DatatypeConverter.printHexBinary(digest);
-            return fileSize + "_" + fileHash;
-        } catch (IOException | NoSuchAlgorithmException ex) {
+            return "" + fileSize;
+        } catch (IOException ex) {
             Logger.getLogger(FileChecker.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "_";
