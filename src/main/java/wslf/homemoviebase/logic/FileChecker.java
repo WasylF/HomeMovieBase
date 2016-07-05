@@ -30,16 +30,10 @@ public class FileChecker {
         this.mongoDB = mongoDB;
     }
 
-    /**
-     * Looking for the similar files that alredy in the db
-     *
-     * @param folderPath path to folder, that stored video files
-     * @return dublicats: List of pairs<input file path, same file in db path>
-     */
-    public LinkedList<Pair<String, String>> check(String folderPath) {
-        try {
-            List<String> files = new LinkedList<>();
+    public static LinkedList<String> getMovies(String folderPath) {
+        LinkedList<String> files = new LinkedList<>();
 
+        try {
             Files.walk(Paths.get(folderPath))
                     .filter(Files::isRegularFile)
                     .forEach(filePath -> {
@@ -50,13 +44,21 @@ public class FileChecker {
                             }
                         }
                     });
-
-            return check(files);
         } catch (IOException ex) {
             Logger.getLogger(FileChecker.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        return null;
+        return files;
+    }
+
+    /**
+     * Looking for the similar files that alredy in the db
+     *
+     * @param folderPath path to folder, that stored video files
+     * @return dublicats: List of pairs<input file path, same file in db path>
+     */
+    public LinkedList<Pair<String, String>> check(String folderPath) {
+        return check(getMovies(folderPath));
     }
 
     /**
@@ -88,7 +90,7 @@ public class FileChecker {
      * @param path path to the file
      * @return hash
      */
-    private String getFileHash(String path) {
+    static String getFileHash(String path) {
         try {
             long fileSize = Files.size(Paths.get(path));
             return "" + fileSize;
