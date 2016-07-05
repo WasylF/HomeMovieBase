@@ -28,6 +28,7 @@ public class Categories extends Collection {
      * @return existence
      */
     public boolean exists(String caption) {
+        caption = caption.trim();
         return collection.count(new Document(CAPTION_FIELD, caption)) != 0;
     }
 
@@ -39,6 +40,7 @@ public class Categories extends Collection {
      */
     private boolean addNew(String caption) {
         try {
+            caption = caption.trim();
             Document category = new Document(CAPTION_FIELD, caption);
             collection.insertOne(category);
         } catch (Exception ex) {
@@ -55,6 +57,7 @@ public class Categories extends Collection {
      * @param caption category caption
      */
     public void ensureExistence(String caption) {
+        caption = caption.trim();
         if (!exists(caption)) {
             addNew(caption);
         }
@@ -67,6 +70,7 @@ public class Categories extends Collection {
      * @return document
      */
     public Document get(String caption) {
+        caption = caption.trim();
         ensureExistence(caption);
 
         FindIterable<Document> iterable = collection.find(new Document(CAPTION_FIELD, caption));

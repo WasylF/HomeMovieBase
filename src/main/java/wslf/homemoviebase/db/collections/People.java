@@ -20,7 +20,7 @@ public class People extends Collection {
      */
     private static final String NAME_FIELD = "name";
     private static final String FULL_NAME_FIELD = "full name";
-    
+
     public People(MongoDatabase database) {
         super(database);
     }
@@ -34,14 +34,16 @@ public class People extends Collection {
      */
     private boolean addNew(String name, String fullName) {
         try {
-            Document human = new Document(NAME_FIELD, "#"+name+"#")
-                    .append(FULL_NAME_FIELD, "#"+fullName+"#");
+            name = name.trim();
+            fullName = fullName.trim();
+            Document human = new Document(NAME_FIELD, "#" + name + "#")
+                    .append(FULL_NAME_FIELD, "#" + fullName + "#");
             collection.insertOne(human);
         } catch (Exception ex) {
             System.err.println("db error!\n" + ex.toString());
             return false;
         }
-        
+
         return true;
     }
 
@@ -62,6 +64,7 @@ public class People extends Collection {
      * @return existence
      */
     public boolean exists(String fullName) {
+        fullName = fullName.trim();
         Document query = getFullNameQuery(fullName);
         return collection.count(query) > 0;
     }
@@ -73,6 +76,7 @@ public class People extends Collection {
      * @return numver of humans with this name
      */
     public int count(String name) {
+        name = name.trim();
         return (int) collection.count(getNameQuery(name));
     }
 
@@ -84,10 +88,12 @@ public class People extends Collection {
      * @return document that contains requested human
      */
     public Document get(String name, String fullName) {
+        name = name.trim();
+        fullName = fullName.trim();
         if (!exists(fullName)) {
             addNew(name, fullName);
         }
-        
+
         FindIterable<Document> iterable = collection.find(getFullNameQuery(fullName));
         return iterable.first();
     }
@@ -101,28 +107,29 @@ public class People extends Collection {
      * short name
      */
     public Document get(String name) {
+        name = name.trim();
         if (exists(name)) {
             FindIterable<Document> iterable = collection.find(getFullNameQuery(name));
             return iterable.first();
         }
-        
+
         if (count(name) == 1) {
             FindIterable<Document> iterable = collection.find(getNameQuery(name));
             return iterable.first();
         }
-        
+
         return null;
     }
-    
+
     private Document getNameQuery(String name) {
-        Document query = new Document(NAME_FIELD, Pattern.compile("#"+name+"#", Pattern.CASE_INSENSITIVE));
+        Document query = new Document(NAME_FIELD, Pattern.compile("#" + name + "#", Pattern.CASE_INSENSITIVE));
         //Document query = new Document(NAME_FIELD, new Document("$regex", name));
         //query.append("$options", "i");
         return query;
     }
-    
+
     private Document getFullNameQuery(String fullName) {
-        Document query = new Document(FULL_NAME_FIELD, Pattern.compile("#"+fullName+"#", Pattern.CASE_INSENSITIVE));
+        Document query = new Document(FULL_NAME_FIELD, Pattern.compile("#" + fullName + "#", Pattern.CASE_INSENSITIVE));
         //query.append("$options", "i");
         return query;
     }

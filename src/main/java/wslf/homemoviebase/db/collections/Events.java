@@ -47,6 +47,7 @@ public class Events extends Collection {
             Document place, int year, int mounth, int day, int accuracy,
             Document category, List<Document> tags) {
         try {
+            caption = caption.trim();
             Document event = new Document(CAPTION_FIELD, caption);
             event.append(PATH_FIELD, path);
             event.append(PEOPLE_FIELD, people);
@@ -77,16 +78,16 @@ public class Events extends Collection {
         query.put(CAPTION_FIELD,
                 new BasicDBObject("$regex", "*" + caption_part + "*")
                 .append("$options", "i"));
-        
+
         query.append(YESR_FIELD, new BasicDBObject("$gte",
                 year_begin).append("$lt", year_end));
-     
+
         FindIterable<Document> events = collection.find(query);
-        
+
         for (Document event : events) {
             result.addLast(event);
         }
-        
+
         return result;
     }
 }
