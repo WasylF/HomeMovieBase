@@ -66,11 +66,14 @@ public class Worker {
      * @param accuracy
      * @param category
      * @param tags
+     * @param addToBase
+     * @param targetPath
      * @return error list
      */
     public String addEvent(String caption, String path, String peopleNames,
             String place, String year, String mounth, String day,
-            String accuracy, String category, String tags) {
+            String accuracy, String category, String tags, boolean addToBase,
+            StringBuilder targetPath) {
         String errorMessage = "";
 
         if (caption.length() < MIN_CAPTION_SIZE) {
@@ -98,7 +101,7 @@ public class Worker {
             if (mounth.isEmpty()) {
                 mounthInt = -1;
             } else {
-                errorMessage += "Неправильный формат даты (год)";
+                errorMessage += "Неправильный формат даты (месяц)";
             }
         }
         Integer dayInt = toInt(day);
@@ -106,7 +109,7 @@ public class Worker {
             if (day.isEmpty()) {
                 dayInt = -1;
             } else {
-                errorMessage += "Неправильный формат даты (год)";
+                errorMessage += "Неправильный формат даты (день)";
             }
         }
         Integer accuracyInt = toInt(accuracy);
@@ -114,7 +117,7 @@ public class Worker {
             if (accuracy.isEmpty()) {
                 accuracyInt = -1;
             } else {
-                errorMessage += "Неправильный формат даты (год)";
+                errorMessage += "Неправильный формат даты (точность)";
             }
         }
 
@@ -122,13 +125,17 @@ public class Worker {
         List<Document> tagsDoc = parseTags(tags);
 
         if (errorMessage.isEmpty()) {
-            if (mongoDB.addEvent(caption, path, people, placeDoc, yearInt,
-                    mounthInt, dayInt, accuracyInt, categoryDoc, tagsDoc)) {
-                if (!moveFiles(path, yearInt, caption, category)) {
-                    errorMessage += "File moving error!\n";
+            if (addToBase) {
+                if (mongoDB.addEvent(caption, targetPath.toString(), people, placeDoc, yearInt,
+                        mounthInt, dayInt, accuracyInt, categoryDoc, tagsDoc)) {
+                    if (!moveFiles(path, targetPath.toString())) {
+                        errorMessage += "File moving error!\n";
+                    }
+                } else {
+                    errorMessage += "DB error!\n";
                 }
             } else {
-                errorMessage += "DB error!\n";
+                targetPath.append(getTargetPath(yearInt, caption, category));
             }
         }
 
@@ -144,6 +151,9 @@ public class Worker {
     }
 
     public String parsePeople(String peopleNames, List<Document> result) {
+        if (peopleNames.isEmpty()) {
+            return SUCCESS_MESSAGE;
+        }
         String errorMessage = "";
         result.clear();
         String[] names = peopleNames.split(",");
@@ -172,10 +182,34 @@ public class Worker {
         return result;
     }
 
+    private boolean moveFiles(String path, String targetPath) {
+        List<String> files = FileChecker.getMovies(path);
+        return moveFiles(files, targetPath);
+    }
+
     private boolean moveFiles(String folder, int year, String caption,
             String category) {
         List<String> files = FileChecker.getMovies(folder);
-        return moveFiles(files, year, caption, category);
+        return moveFiles(files, getTargetPath(year, caption, category));
+    }
+
+    String getTargetPath(int year, String caption,
+            String category) {
+        if (category.isEmpty()) {
+            category = "Разное";
+        }
+        return rootFolder + "\\" + category + "\\" + year + "\\"
+                + caption + "_0" + random.nextInt(100) + "\\";
+    }
+
+    private void insureDestination(String destination) {
+        if (!Files.exists(Paths.get(destination))) {
+            try {
+                Files.createDirectories(Paths.get(destination));
+            } catch (IOException ex) {
+                Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     private boolean moveFiles(List<String> source, int year, String caption,
@@ -183,21 +217,13 @@ public class Worker {
         if (source.isEmpty()) {
             return true;
         }
-        String destination = rootFolder + "\\" + category + "\\" + year + "\\"
-                + caption + "_0" + random.nextInt(100) + "\\";
-        if (!Files.exists(Paths.get(destination))) {
-            try {
-                Files.createDirectories(Paths.get(destination));
-//                Files.createDirectory(Paths.get(destination));
-                //Files.cre
-            } catch (IOException ex) {
-                Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+
+        String destination = getTargetPath(MIN_CAPTION_SIZE, caption, category);
         return moveFiles(source, destination);
     }
 
     private boolean moveFiles(List<String> source, String destinationFolder) {
+        insureDestination(destinationFolder);
         try {
             for (String file : source) {
                 Path path = Paths.get(file);
@@ -213,6 +239,17 @@ public class Worker {
         }
 
         return true;
+    }
+
+    public boolean findRootPath() {
+        for (char drive = 'C'; drive <= 'Z'; drive++) {
+            String path = drive + ":\\" + DEFAULT_ROOT_FOLDER;
+            if (Files.exists(Paths.get(path))) {
+                setRootFolder(path);
+                return true;
+            }
+        }
+        return false;
     }
 
 }
