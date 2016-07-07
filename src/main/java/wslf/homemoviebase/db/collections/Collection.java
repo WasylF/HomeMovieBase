@@ -67,27 +67,27 @@ public abstract class Collection {
     }
 
     /**
-     * 
+     *
      * @return all documents from collection
      */
     public LinkedList<Document> getAll() {
         FindIterable<Document> allDocuments = collection.find();
         LinkedList<Document> result = new LinkedList<>();
-        
+
         for (Document document : allDocuments) {
             result.add(document);
         }
 
         return result;
     }
-    
+
     public void printAll() {
         LinkedList<Document> all = getAll();
-        int i = 0;
+        int number = 0;
         for (Document doc : all) {
-            i++;
-            System.out.println(i+") ");
-            System.out.println(doc.toJson().toString());
+            number++;
+            System.out.println(number + ") ");
+            System.out.println(doc.toJson());
         }
     }
 }
