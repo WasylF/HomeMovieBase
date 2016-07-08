@@ -1,15 +1,9 @@
 package wslf.homemoviebase.forms;
 
-import java.awt.Desktop;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.util.Pair;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import wslf.homemoviebase.logic.Worker;
@@ -19,7 +13,7 @@ import wslf.homemoviebase.logic.Worker;
  * @author Wsl_F
  */
 public class AddEventForm extends javax.swing.JFrame {
-    
+
     Worker worker;
 
     /**
@@ -29,7 +23,7 @@ public class AddEventForm extends javax.swing.JFrame {
      */
     public AddEventForm(Worker worker) {
         this.worker = worker;
-        
+
         initComponents();
         setVisible(false);
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -47,49 +41,49 @@ public class AddEventForm extends javax.swing.JFrame {
         this(worker);
         autocompleteByPath(path);
     }
-    
+
     private void autocompleteByPath(String path) {
         pathText.setText(path);
         String eventCaption = path.substring(path.lastIndexOf('\\') + 1);
         CaptionText.setText(eventCaption);
-        
+
         String date = worker.getCreationDate(path);
         yearText.getEditor().setItem(date.substring(0, 4));
     }
-    
+
     private void loadComboBoxValues() {
         categoryText.removeAllItems();
         AutoCompleteDecorator.decorate(categoryText);
         for (String category : worker.getAllCategories()) {
             categoryText.addItem(category);
         }
-        
+
         placeText.removeAllItems();
         AutoCompleteDecorator.decorate(placeText);
         for (String place : worker.getAllPlaces()) {
             placeText.addItem(place);
         }
-        
+
         yearText.removeAllItems();
         AutoCompleteDecorator.decorate(yearText);
         for (int year = 2016; year >= 1990; year--) {
             yearText.addItem(year);
         }
-        
+
         mounthText.removeAllItems();
         AutoCompleteDecorator.decorate(mounthText);
         mounthText.addItem("");
         for (int mounth = 1; mounth <= 12; mounth++) {
             mounthText.addItem(mounth);
         }
-        
+
         dayText.removeAllItems();
         AutoCompleteDecorator.decorate(dayText);
         dayText.addItem("");
         for (int day = 1; day <= 31; day++) {
             dayText.addItem(day);
         }
-        
+
     }
 
     /**
@@ -353,22 +347,12 @@ public class AddEventForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void pathLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pathLabelMouseClicked
-        
-        JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new java.io.File("."));
-        chooser.setDialogTitle("Выберите папку с видеофайлами");
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
-        
-        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            String path = chooser.getSelectedFile().toString();
+        String path = Helper.chooseDirectory("Выберите папку с видеофайлами");
+        if (path != null) {
             autocompleteByPath(path);
-        } else {
-            System.out.println("No Selection ");
         }
-        
     }//GEN-LAST:event_pathLabelMouseClicked
-    
+
     private void confirmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmButtonActionPerformed
         if (confirmButton.isSelected()) {
             confirmButton.setSelected(false);
@@ -391,7 +375,7 @@ public class AddEventForm extends javax.swing.JFrame {
                     dayText.getSelectedItem().toString(), "-1",
                     categoryText.getSelectedItem().toString(),
                     tagsText.getText(), false, targetPath);
-            
+
             if (status.equals(wslf.homemoviebase.logic.Constants.SUCCESS_MESSAGE)) {
                 targetPathText.setText(targetPath.toString());
                 setEditAbleElements(false);
@@ -403,7 +387,7 @@ public class AddEventForm extends javax.swing.JFrame {
             setEditAbleElements(true);
         }
     }//GEN-LAST:event_confirmButtonActionPerformed
-    
+
     private void setEditAbleElements(boolean able) {
         CaptionText.setEditable(able);
         pathText.setEditable(able);
@@ -415,7 +399,7 @@ public class AddEventForm extends javax.swing.JFrame {
         categoryText.setEditable(able);
         tagsText.setEditable(able);
         targetPathText.setEditable(!able);
-        
+
         CaptionText.setEnabled(able);
         pathText.setEnabled(able);
         yearText.setEnabled(able);
@@ -426,12 +410,12 @@ public class AddEventForm extends javax.swing.JFrame {
         categoryText.setEnabled(able);
         tagsText.setEnabled(able);
         targetPathText.setEnabled(!able);
-        
+
         addEventButton.setEnabled(!able);
     }
-    
+
     private void addEventButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addEventButtonActionPerformed
-        
+
         StringBuilder targetPath = new StringBuilder(targetPathText.getText());
         String status = worker.addEvent(CaptionText.getText(), pathText.getText(),
                 peopleText.getText(), placeText.getSelectedItem().toString(),
@@ -440,32 +424,19 @@ public class AddEventForm extends javax.swing.JFrame {
                 dayText.getSelectedItem().toString(), "-1",
                 categoryText.getSelectedItem().toString(),
                 tagsText.getText(), true, targetPath);
-        
+
         if (status.equals(wslf.homemoviebase.logic.Constants.SUCCESS_MESSAGE)) {
             JOptionPane.showMessageDialog(this, "Операция успешно выполнена!", "Информация", JOptionPane.INFORMATION_MESSAGE);
             dispose();
         } else {
             JOptionPane.showMessageDialog(this, status, "Ошибка!", JOptionPane.ERROR_MESSAGE);
         }
-        
+
     }//GEN-LAST:event_addEventButtonActionPerformed
-    
+
     private void explorerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_explorerButtonActionPerformed
         Path path = Paths.get(pathText.getText());
-        
-        if (!path.toString().isEmpty()
-                && Files.exists(path) && Files.isDirectory(path)) {
-            try {
-                Desktop desktop = Desktop.getDesktop();
-                desktop.open(path.toFile());
-            } catch (IOException ex) {
-                Logger.getLogger(AddEventForm.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Данный путь не существует!",
-                    "Ошибка!", JOptionPane.ERROR_MESSAGE);
-        }
-        
+        Helper.openPathInExplorer(path, this);
     }//GEN-LAST:event_explorerButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

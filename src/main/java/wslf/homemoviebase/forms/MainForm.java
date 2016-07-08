@@ -2,7 +2,6 @@ package wslf.homemoviebase.forms;
 
 import java.util.List;
 import javax.swing.DefaultListModel;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import wslf.homemoviebase.logic.Worker;
 
@@ -178,36 +177,20 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_addEventButtonActionPerformed
 
     private void rootPathLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rootPathLabelMouseClicked
+        String rootPath = Helper.chooseDirectory("Выберите корневую папку");
 
-        JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new java.io.File("."));
-        chooser.setDialogTitle("Выберите корневую папку");
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
-
-        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            String path = chooser.getSelectedFile().toString();
-            worker.setRootFolder(path);
-            rootPathText.setText(path);
-        } else {
-            System.out.println("No Selection ");
+        if (rootPath != null) {
+            worker.setRootFolder(rootPath);
+            rootPathText.setText(rootPath);
         }
-
     }//GEN-LAST:event_rootPathLabelMouseClicked
 
     private void workPathLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_workPathLabelMouseClicked
-        JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new java.io.File("."));
-        chooser.setDialogTitle("Выберите рабочую папку");
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
+        String workPath = Helper.chooseDirectory("Выберите рабочую папку");
 
-        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            String path = chooser.getSelectedFile().toString();
-            worker.setWorkFolder(path);
-            workPathText.setText(path);
-        } else {
-            System.out.println("No Selection ");
+        if (workPath != null) {
+            worker.setWorkFolder(workPath);
+            workPathText.setText(workPath);
         }
     }//GEN-LAST:event_workPathLabelMouseClicked
 
