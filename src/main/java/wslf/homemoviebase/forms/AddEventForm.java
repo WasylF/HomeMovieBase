@@ -5,7 +5,15 @@
  */
 package wslf.homemoviebase.forms;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.util.Pair;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -118,6 +126,7 @@ public class AddEventForm extends javax.swing.JFrame {
         targetPathText = new javax.swing.JTextField();
         confirmButton = new javax.swing.JToggleButton();
         addEventButton = new javax.swing.JButton();
+        explorerButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -218,12 +227,23 @@ public class AddEventForm extends javax.swing.JFrame {
             }
         });
 
+        explorerButton.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        explorerButton.setText("Открыть");
+        explorerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                explorerButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(explorerButton))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(addEventButton))
@@ -247,16 +267,16 @@ public class AddEventForm extends javax.swing.JFrame {
                                         .addComponent(confirmButton))
                                     .addComponent(CaptionText)
                                     .addComponent(pathText)
-                                    .addComponent(yearText)
-                                    .addComponent(dayText)
+                                    .addComponent(yearText, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(dayText, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(peopleText)
-                                    .addComponent(placeText)
-                                    .addComponent(categoryText)
+                                    .addComponent(placeText, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(categoryText, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(targetPathText)))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addComponent(mounthLabel)
                                 .addGap(57, 57, 57)
-                                .addComponent(mounthText))
+                                .addComponent(mounthText, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(placeLable, javax.swing.GroupLayout.Alignment.LEADING)
@@ -267,7 +287,7 @@ public class AddEventForm extends javax.swing.JFrame {
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {captionLabel, categoryLabel, dayLabel, mounthLabel, pathLabel, peopleLabel, placeLable, tagsLabel, targetPathLabel, yearLabel});
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addEventButton, confirmButton});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addEventButton, confirmButton, explorerButton});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -278,7 +298,9 @@ public class AddEventForm extends javax.swing.JFrame {
                         .addGap(3, 3, 3)
                         .addComponent(CaptionText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(captionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                .addComponent(explorerButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)
@@ -335,7 +357,7 @@ public class AddEventForm extends javax.swing.JFrame {
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {captionLabel, categoryLabel, dayLabel, mounthLabel, pathLabel, peopleLabel, placeLable, tagsLabel, targetPathLabel, yearLabel});
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {addEventButton, confirmButton});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {addEventButton, confirmButton, explorerButton});
 
         captionLabel.getAccessibleContext().setAccessibleName("captionLabel");
 
@@ -444,11 +466,30 @@ public class AddEventForm extends javax.swing.JFrame {
 
         if (status.equals(wslf.homemoviebase.logic.Constants.SUCCESS_MESSAGE)) {
             JOptionPane.showMessageDialog(this, "Операция успешно выполнена!", "Информация", JOptionPane.INFORMATION_MESSAGE);
+            dispose();
         } else {
             JOptionPane.showMessageDialog(this, status, "Ошибка!", JOptionPane.ERROR_MESSAGE);
         }
 
     }//GEN-LAST:event_addEventButtonActionPerformed
+
+    private void explorerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_explorerButtonActionPerformed
+        Path path = Paths.get(pathText.getText());
+
+        if (!path.toString().isEmpty()
+                && Files.exists(path) && Files.isDirectory(path)) {
+            try {
+                Desktop desktop = Desktop.getDesktop();
+                desktop.open(path.toFile());
+            } catch (IOException ex) {
+                Logger.getLogger(AddEventForm.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Данный путь не существует!",
+                    "Ошибка!", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }//GEN-LAST:event_explorerButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField CaptionText;
@@ -459,6 +500,7 @@ public class AddEventForm extends javax.swing.JFrame {
     private javax.swing.JToggleButton confirmButton;
     private javax.swing.JLabel dayLabel;
     private javax.swing.JComboBox dayText;
+    private javax.swing.JButton explorerButton;
     private javax.swing.JLabel mounthLabel;
     private javax.swing.JComboBox mounthText;
     private javax.swing.JLabel pathLabel;
