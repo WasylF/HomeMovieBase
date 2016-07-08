@@ -37,10 +37,10 @@ public class FileChecker {
      * @return YYYY-MM-DD
      */
     public static String getCreationDate(String folderPath) {
-        String filePath = getMovies(folderPath).getFirst();
-        Path path = Paths.get(filePath);
-        BasicFileAttributes attr;
         try {
+            String filePath = getMovies(folderPath).getFirst();
+            Path path = Paths.get(filePath);
+            BasicFileAttributes attr;
             attr = Files.readAttributes(path, BasicFileAttributes.class);
             System.out.println("creationTime: " + attr.creationTime());
             return attr.creationTime().toString().substring(0, 10);
