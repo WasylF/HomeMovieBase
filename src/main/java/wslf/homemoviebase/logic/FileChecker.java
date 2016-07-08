@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +29,26 @@ public class FileChecker {
 
     public FileChecker(MongoDB mongoDB) {
         this.mongoDB = mongoDB;
+    }
+
+    /**
+     *
+     * @param folderPath path to folder with files
+     * @return YYYY-MM-DD
+     */
+    public static String getCreationDate(String folderPath) {
+        String filePath = getMovies(folderPath).getFirst();
+        Path path = Paths.get(filePath);
+        BasicFileAttributes attr;
+        try {
+            attr = Files.readAttributes(path, BasicFileAttributes.class);
+            System.out.println("creationTime: " + attr.creationTime());
+            return attr.creationTime().toString().substring(0, 10);
+        } catch (IOException ex) {
+            Logger.getLogger(FileChecker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return "0000-00-00";
     }
 
     public static LinkedList<String> getMovies(String folderPath) {

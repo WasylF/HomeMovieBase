@@ -291,4 +291,13 @@ public class Worker {
     public List<String> getMoviesFolders(int amount) {
         return moviesFinder.findFolders(workFolder, amount);
     }
+
+    /**
+     *
+     * @param folderPath path to folder with files
+     * @return YYYY-MM-DD
+     */
+    public String getCreationDate(String folderPath) {
+        return FileChecker.getCreationDate(folderPath);
+    }
 }
