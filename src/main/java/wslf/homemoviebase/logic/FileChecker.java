@@ -26,6 +26,7 @@ public class FileChecker {
      * object to work with db
      */
     private final MongoDB mongoDB;
+    private String rootFolder;
 
     public FileChecker(MongoDB mongoDB) {
         this.mongoDB = mongoDB;
@@ -76,9 +77,12 @@ public class FileChecker {
      * Looking for the similar files that alredy in the db
      *
      * @param folderPath path to folder, that stored video files
+     * @param rootFolder root folder, that contain all movies from the DB
      * @return dublicats: List of pairs<input file path, same file in db path>
      */
-    public LinkedList<Pair<String, String>> check(String folderPath) {
+    public LinkedList<Pair<String, String>> check(String folderPath,
+            String rootFolder) {
+        this.rootFolder = rootFolder;
         return check(getMovies(folderPath));
     }
 
@@ -88,7 +92,7 @@ public class FileChecker {
      * @param files list of pathes to files thats needs to be checked
      * @return dublicats: List of pairs<input file path, same file in db path>
      */
-    public LinkedList<Pair<String, String>> check(List<String> files) {
+    private LinkedList<Pair<String, String>> check(List<String> files) {
         LinkedList<Pair<String, String>> dublicats = new LinkedList<>();
         for (String filePath : files) {
             String hashCode = getFileHash(filePath);
@@ -96,8 +100,10 @@ public class FileChecker {
             if (!sameHash.isEmpty()) {
                 Path curFile = Paths.get(filePath);
                 for (String collisionPath : sameHash) {
-                    if (isSameContent(curFile, Paths.get(collisionPath))) {
-                        dublicats.add(new Pair(filePath, collisionPath));
+                    Path path = Paths.get(rootFolder + "\\" + collisionPath);
+                    if (isSameContent(curFile, path)) {
+                        dublicats.add(new Pair(filePath,
+                                path.toAbsolutePath().toString()));
                     }
                 }
             }

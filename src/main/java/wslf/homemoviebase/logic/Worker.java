@@ -62,7 +62,7 @@ public class Worker {
      * @return dublicats: List of pairs<input file path, same file in db path>
      */
     public LinkedList<Pair<String, String>> checkEvent(String folderPath) {
-        return fileChecker.check(folderPath);
+        return fileChecker.check(folderPath, rootFolder);
     }
 
     /**
@@ -242,7 +242,9 @@ public class Worker {
                 if (Files.exists(path) && Files.isRegularFile(path)) {
                     Path target = Paths.get(destinationFolder + path.getFileName().toString());
                     Files.move(path, target, StandardCopyOption.REPLACE_EXISTING);
-                    mongoDB.addFile(target.toString(),
+                    String newPath = target.toAbsolutePath().toString();
+                    String shortNewPath = newPath.substring(rootFolder.length());
+                    mongoDB.addFile(shortNewPath,
                             FileChecker.getFileHash(target.toString()));
                 }
             }
