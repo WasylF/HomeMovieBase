@@ -252,4 +252,27 @@ public class Worker {
         return false;
     }
 
+    public LinkedList<Document> getAll(String collectionName) {
+        return mongoDB.getCollection(collectionName);
+    }
+
+    public LinkedList<String> getAllCategories() {
+        List<Document> categories = mongoDB.getCollection("Categories");
+        LinkedList<String> result = new LinkedList<>();
+        for (Document category : categories) {
+            result.add(category.getString("caption"));
+        }
+
+        return result;
+    }
+
+    public LinkedList<String> getAllPlaces() {
+        List<Document> places = mongoDB.getCollection("Places");
+        LinkedList<String> result = new LinkedList<>();
+        for (Document place : places) {
+            result.add(place.getString("caption"));
+        }
+
+        return result;
+    }
 }

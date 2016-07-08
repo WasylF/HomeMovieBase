@@ -142,4 +142,26 @@ public class MongoDB {
     public boolean addFile(String file, String hash) {
         return files.addNew(file, hash);
     }
+
+    public LinkedList<Document> getCollection(String collectionName) {
+        if (collectionName.equals("Categories")) {
+            return categories.getAll();
+        }
+        if (collectionName.equals("Events")) {
+            return events.getAll();
+        }
+        if (collectionName.equals("Files")) {
+            return files.getAll();
+        }
+        if (collectionName.equals("People")) {
+            return people.getAll();
+        }
+        if (collectionName.equals("Places")) {
+            return places.getAll();
+        }
+        if (collectionName.equals("Tags")) {
+            return tags.getAll();
+        }
+        return new LinkedList<>();
+    }
 }
