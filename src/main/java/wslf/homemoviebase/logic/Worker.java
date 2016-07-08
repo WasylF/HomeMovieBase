@@ -26,6 +26,8 @@ public class Worker {
     FileChecker fileChecker;
     String rootFolder;
     Random random;
+    MoviesFinder moviesFinder;
+    String workFolder;
 
     public void setRootFolder(String rootFolder) {
         this.rootFolder = rootFolder;
@@ -35,11 +37,21 @@ public class Worker {
         return rootFolder;
     }
 
+    public void setWorkFolder(String workFolder) {
+        this.workFolder = workFolder;
+    }
+
+    public String getWorkFolder() {
+        return workFolder;
+    }
+
     public Worker() {
         mongoDB = new MongoDB("HMB", "mongodb://localhost:27017");
         mongoDB.ensureBasics();
 
         fileChecker = new FileChecker(mongoDB);
+        moviesFinder = new MoviesFinder();
+        workFolder = "C:\\";
         random = new Random(Double.doubleToLongBits(Math.random()) ^ System.nanoTime());
     }
 
@@ -274,5 +286,9 @@ public class Worker {
         }
 
         return result;
+    }
+
+    public List<String> getMoviesFolders(int amount) {
+        return moviesFinder.findFolders(workFolder, amount);
     }
 }
