@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import javafx.util.Pair;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import wslf.homemoviebase.logic.Worker;
 
 /**
@@ -29,6 +30,42 @@ public class AddEventForm extends javax.swing.JFrame {
         setVisible(false);
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setEditAbleElements(true);
+        loadComboBoxValues();
+    }
+
+    private void loadComboBoxValues() {
+        categoryText.removeAllItems();
+        AutoCompleteDecorator.decorate(categoryText);
+        for (String category : worker.getAllCategories()) {
+            categoryText.addItem(category);
+        }
+
+        placeText.removeAllItems();
+        AutoCompleteDecorator.decorate(placeText);
+        for (String place : worker.getAllPlaces()) {
+            placeText.addItem(place);
+        }
+
+        yearText.removeAllItems();
+        AutoCompleteDecorator.decorate(yearText);
+        for (int year = 2016; year >= 1990; year--) {
+            yearText.addItem(year);
+        }
+
+        mounthText.removeAllItems();
+        AutoCompleteDecorator.decorate(mounthText);
+        mounthText.addItem("");
+        for (int mounth = 1; mounth <= 12; mounth++) {
+            mounthText.addItem(mounth);
+        }
+
+        dayText.removeAllItems();
+        AutoCompleteDecorator.decorate(dayText);
+        dayText.addItem("");
+        for (int day = 1; day <= 31; day++) {
+            dayText.addItem(day);
+        }
+
     }
 
     /**
@@ -52,12 +89,12 @@ public class AddEventForm extends javax.swing.JFrame {
         targetPathLabel = new javax.swing.JLabel();
         CaptionText = new javax.swing.JTextField();
         pathText = new javax.swing.JTextField();
-        yearText = new javax.swing.JTextField();
-        mounthText = new javax.swing.JTextField();
-        dayText = new javax.swing.JTextField();
+        yearText = new javax.swing.JComboBox();
+        mounthText = new javax.swing.JComboBox();
+        dayText = new javax.swing.JComboBox();
         peopleText = new javax.swing.JTextField();
-        placeText = new javax.swing.JTextField();
-        categoryText = new javax.swing.JTextField();
+        placeText = new javax.swing.JComboBox();
+        categoryText = new javax.swing.JComboBox();
         tagsText = new javax.swing.JTextField();
         targetPathText = new javax.swing.JTextField();
         confirmButton = new javax.swing.JToggleButton();
@@ -123,10 +160,8 @@ public class AddEventForm extends javax.swing.JFrame {
         pathText.setMargin(new java.awt.Insets(1, 10, 1, 3));
 
         yearText.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
-        yearText.setMargin(new java.awt.Insets(1, 10, 1, 3));
 
         mounthText.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
-        mounthText.setMargin(new java.awt.Insets(1, 10, 1, 3));
         mounthText.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mounthTextActionPerformed(evt);
@@ -134,16 +169,13 @@ public class AddEventForm extends javax.swing.JFrame {
         });
 
         dayText.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
-        dayText.setMargin(new java.awt.Insets(1, 10, 1, 3));
 
         peopleText.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         peopleText.setMargin(new java.awt.Insets(1, 10, 1, 3));
 
         placeText.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
-        placeText.setMargin(new java.awt.Insets(1, 10, 1, 3));
 
         categoryText.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
-        categoryText.setMargin(new java.awt.Insets(1, 10, 1, 3));
 
         tagsText.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
         tagsText.setMargin(new java.awt.Insets(1, 10, 1, 3));
@@ -222,55 +254,55 @@ public class AddEventForm extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(33, 33, 33)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(captionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)
-                        .addComponent(CaptionText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(CaptionText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(captionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(pathLabel)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)
-                        .addComponent(pathText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(pathText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pathLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(yearLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(yearText, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(mounthLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)
-                        .addComponent(mounthText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(mounthText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(mounthLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(dayLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(dayText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(peopleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)
-                        .addComponent(peopleText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(peopleText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(peopleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(placeLable, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)
-                        .addComponent(placeText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(placeText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(placeLable, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(categoryLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)
-                        .addComponent(categoryText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(categoryText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(categoryLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tagsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)
-                        .addComponent(tagsText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(tagsText, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tagsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(20, 20, 20)
                 .addComponent(confirmButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
@@ -335,9 +367,12 @@ public class AddEventForm extends javax.swing.JFrame {
             }
             StringBuilder targetPath = new StringBuilder("");
             String status = worker.addEvent(CaptionText.getText(), pathText.getText(),
-                    peopleText.getText(), placeText.getText(), yearText.getText(),
-                    mounthText.getText(), dayText.getText(), "-1",
-                    categoryText.getText(), tagsText.getText(), false, targetPath);
+                    peopleText.getText(), placeText.getSelectedItem().toString(),
+                    yearText.getSelectedItem().toString(),
+                    mounthText.getSelectedItem().toString(),
+                    dayText.getSelectedItem().toString(), "-1",
+                    categoryText.getSelectedItem().toString(),
+                    tagsText.getText(), false, targetPath);
 
             if (status.equals(wslf.homemoviebase.logic.Constants.SUCCESS_MESSAGE)) {
                 targetPathText.setText(targetPath.toString());
@@ -381,9 +416,12 @@ public class AddEventForm extends javax.swing.JFrame {
 
         StringBuilder targetPath = new StringBuilder(targetPathText.getText());
         String status = worker.addEvent(CaptionText.getText(), pathText.getText(),
-                peopleText.getText(), placeText.getText(), yearText.getText(),
-                mounthText.getText(), dayText.getText(), "-1",
-                categoryText.getText(), tagsText.getText(), true, targetPath);
+                peopleText.getText(), placeText.getSelectedItem().toString(),
+                yearText.getSelectedItem().toString(),
+                mounthText.getSelectedItem().toString(),
+                dayText.getSelectedItem().toString(), "-1",
+                categoryText.getSelectedItem().toString(),
+                tagsText.getText(), true, targetPath);
 
         if (status.equals(wslf.homemoviebase.logic.Constants.SUCCESS_MESSAGE)) {
             JOptionPane.showMessageDialog(this, "Операция успешно выполнена!", "Информация", JOptionPane.INFORMATION_MESSAGE);
@@ -399,23 +437,23 @@ public class AddEventForm extends javax.swing.JFrame {
     private javax.swing.JButton addEventButton;
     private javax.swing.JLabel captionLabel;
     private javax.swing.JLabel categoryLabel;
-    private javax.swing.JTextField categoryText;
+    private javax.swing.JComboBox categoryText;
     private javax.swing.JToggleButton confirmButton;
     private javax.swing.JLabel dayLabel;
-    private javax.swing.JTextField dayText;
+    private javax.swing.JComboBox dayText;
     private javax.swing.JLabel mounthLabel;
-    private javax.swing.JTextField mounthText;
+    private javax.swing.JComboBox mounthText;
     private javax.swing.JLabel pathLabel;
     private javax.swing.JTextField pathText;
     private javax.swing.JLabel peopleLabel;
     private javax.swing.JTextField peopleText;
     private javax.swing.JLabel placeLable;
-    private javax.swing.JTextField placeText;
+    private javax.swing.JComboBox placeText;
     private javax.swing.JLabel tagsLabel;
     private javax.swing.JTextField tagsText;
     private javax.swing.JLabel targetPathLabel;
     private javax.swing.JTextField targetPathText;
     private javax.swing.JLabel yearLabel;
-    private javax.swing.JTextField yearText;
+    private javax.swing.JComboBox yearText;
     // End of variables declaration//GEN-END:variables
 }
