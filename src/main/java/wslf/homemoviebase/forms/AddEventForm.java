@@ -22,6 +22,8 @@ public class AddEventForm extends javax.swing.JFrame {
 
     /**
      * Creates new form AddEventForm
+     *
+     * @param worker worker
      */
     public AddEventForm(Worker worker) {
         this.worker = worker;
@@ -31,6 +33,23 @@ public class AddEventForm extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setEditAbleElements(true);
         loadComboBoxValues();
+    }
+
+    /**
+     * Creates new form AddEventForm
+     *
+     * @param worker worker
+     * @param path path to folder with movies
+     */
+    public AddEventForm(Worker worker, String path) {
+        this(worker);
+
+        pathText.setText(path);
+        String eventCaption = path.substring(path.lastIndexOf('\\') + 1);
+        CaptionText.setText(eventCaption);
+
+        String date = worker.getCreationDate(path);
+        yearText.getEditor().setItem(date.substring(0, 4));
     }
 
     private void loadComboBoxValues() {
@@ -430,7 +449,6 @@ public class AddEventForm extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_addEventButtonActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField CaptionText;

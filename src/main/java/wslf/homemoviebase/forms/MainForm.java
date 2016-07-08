@@ -5,6 +5,8 @@
  */
 package wslf.homemoviebase.forms;
 
+import java.util.List;
+import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import wslf.homemoviebase.logic.Worker;
@@ -16,6 +18,7 @@ import wslf.homemoviebase.logic.Worker;
 public class MainForm extends javax.swing.JFrame {
 
     Worker worker;
+    private DefaultListModel foundEventsModel;
 
     /**
      * Creates new form MainForm
@@ -25,12 +28,22 @@ public class MainForm extends javax.swing.JFrame {
 
         initComponents();
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        initMyComponents();
+    }
+
+    private final void initMyComponents() {
         rootPathText.setEditable(false);
+        workPathText.setEditable(false);
         if (worker.findRootPath()) {
             rootPathText.setText(worker.getRootFolder());
         } else {
             JOptionPane.showMessageDialog(this, "Корневая папка не найдена", "Ошибка!", JOptionPane.ERROR_MESSAGE);
         }
+        workPathText.setText(worker.getWorkFolder());
+
+        foundEventList.removeAll();
+        foundEventsModel = new DefaultListModel();
+        foundEventList.setModel(foundEventsModel);
     }
 
     /**
@@ -45,6 +58,11 @@ public class MainForm extends javax.swing.JFrame {
         addEventButton = new javax.swing.JButton();
         rootPathLabel = new javax.swing.JLabel();
         rootPathText = new javax.swing.JTextField();
+        workPathLabel = new javax.swing.JLabel();
+        workPathText = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        foundEventList = new javax.swing.JList<>();
+        findEventButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -68,34 +86,91 @@ public class MainForm extends javax.swing.JFrame {
         rootPathText.setText("E:\\TEST_HMV\\E");
         rootPathText.setMargin(new java.awt.Insets(1, 10, 1, 2));
 
+        workPathLabel.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
+        workPathLabel.setText(" Рабочая папка: ");
+        workPathLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        workPathLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                workPathLabelMouseClicked(evt);
+            }
+        });
+
+        workPathText.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
+        workPathText.setMargin(new java.awt.Insets(1, 10, 1, 2));
+
+        foundEventList.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        foundEventList.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        foundEventList.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        foundEventList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        foundEventList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                foundEventListMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(foundEventList);
+
+        findEventButton.setText("Найти события");
+        findEventButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                findEventButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(rootPathLabel))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(rootPathLabel)
+                                    .addComponent(workPathLabel))
+                                .addGap(55, 55, 55)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(workPathText, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                                    .addComponent(rootPathText))))
+                        .addGap(20, 20, 20))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(15, 15, 15)
-                        .addComponent(rootPathText, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(134, 134, 134)
-                        .addComponent(addEventButton)))
-                .addGap(15, 15, 15))
+                        .addComponent(findEventButton)
+                        .addGap(81, 81, 81)
+                        .addComponent(addEventButton)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {rootPathLabel, workPathLabel});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(24, 24, 24)
-                .addComponent(rootPathLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(rootPathText, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
-                .addComponent(addEventButton)
-                .addGap(29, 29, 29))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(rootPathLabel)
+                    .addComponent(rootPathText, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(workPathLabel)
+                    .addComponent(workPathText, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(29, 29, 29)
+                .addComponent(jScrollPane1)
+                .addGap(31, 31, 31)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(addEventButton)
+                    .addComponent(findEventButton))
+                .addGap(25, 25, 25))
         );
+
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {rootPathLabel, workPathLabel});
+
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {rootPathText, workPathText});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -123,13 +198,54 @@ public class MainForm extends javax.swing.JFrame {
             System.out.println("No Selection ");
         }
 
-
     }//GEN-LAST:event_rootPathLabelMouseClicked
 
+    private void workPathLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_workPathLabelMouseClicked
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new java.io.File("."));
+        chooser.setDialogTitle("Выберите рабочую папку");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+
+        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            String path = chooser.getSelectedFile().toString();
+            worker.setWorkFolder(path);
+            workPathText.setText(path);
+        } else {
+            System.out.println("No Selection ");
+        }
+    }//GEN-LAST:event_workPathLabelMouseClicked
+
+    private void findEventButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findEventButtonActionPerformed
+
+        List<String> movies = worker.getMoviesFolders(10);
+        for (String folder : movies) {
+            foundEventsModel.addElement(folder);
+        }
+    }//GEN-LAST:event_findEventButtonActionPerformed
+
+    private void foundEventListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_foundEventListMouseClicked
+
+        if (evt.getClickCount() == 2) {
+            int index = foundEventList.locationToIndex(evt.getPoint());
+            String folderPath = (String) foundEventsModel.get(index);
+            System.out.println(folderPath);
+            foundEventsModel.remove(index);
+            AddEventForm addEventForm = new AddEventForm(worker, folderPath);
+            addEventForm.setVisible(true);
+
+        }
+
+    }//GEN-LAST:event_foundEventListMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addEventButton;
+    private javax.swing.JButton findEventButton;
+    private javax.swing.JList<String> foundEventList;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel rootPathLabel;
     private javax.swing.JTextField rootPathText;
+    private javax.swing.JLabel workPathLabel;
+    private javax.swing.JTextField workPathText;
     // End of variables declaration//GEN-END:variables
 }
