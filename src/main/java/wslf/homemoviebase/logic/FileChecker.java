@@ -34,7 +34,7 @@ public class FileChecker {
         LinkedList<String> files = new LinkedList<>();
 
         try {
-            Files.walk(Paths.get(folderPath))
+            Files.walk(Paths.get(folderPath), 1)
                     .filter(Files::isRegularFile)
                     .forEach(filePath -> {
                         for (String dataType : DATA_TYPES) {
