@@ -356,15 +356,11 @@ public class AddEventForm extends javax.swing.JFrame {
     private void confirmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmButtonActionPerformed
         if (confirmButton.isSelected()) {
             confirmButton.setSelected(false);
-            LinkedList<Pair<String, String>> dublicats = worker.checkEvent(pathText.getText());
-            if (!dublicats.isEmpty()) {
-                StringBuilder dublicatsText = new StringBuilder("");
-                for (Pair<String, String> pair : dublicats) {
-                    dublicatsText.append(pair.getKey()).append("   -   ")
-                            .append(pair.getValue()).append("\n\n");
-                }
-                JOptionPane.showMessageDialog(this, dublicatsText,
-                        "Дубликаты", JOptionPane.ERROR_MESSAGE);
+            LinkedList<Pair<String, String>> duplicates = worker.checkEvent(pathText.getText());
+            if (!duplicates.isEmpty()) {
+                ShowDuplicatesForm showDublicatsForm = new ShowDuplicatesForm();
+                showDublicatsForm.addDuplicates(duplicates);
+                showDublicatsForm.setVisible(true);
                 return;
             }
             StringBuilder targetPath = new StringBuilder("");
