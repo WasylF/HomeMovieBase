@@ -138,7 +138,8 @@ public class Worker {
 
         if (errorMessage.isEmpty()) {
             if (addToBase) {
-                if (mongoDB.addEvent(caption, targetPath.toString(), people, placeDoc, yearInt,
+                String relativePath = getRelativePath(targetPath.toString());
+                if (mongoDB.addEvent(caption, relativePath, people, placeDoc, yearInt,
                         mounthInt, dayInt, accuracyInt, categoryDoc, tagsDoc)) {
                     if (!moveFiles(path, targetPath.toString())) {
                         errorMessage += "File moving error!\n";
@@ -163,11 +164,11 @@ public class Worker {
     }
 
     public String parsePeople(String peopleNames, List<Document> result) {
+        result.clear();
         if (peopleNames.isEmpty()) {
             return SUCCESS_MESSAGE;
         }
         String errorMessage = "";
-        result.clear();
         String[] names = peopleNames.split(",");
         for (String name : names) {
             name = name.trim();
@@ -184,7 +185,9 @@ public class Worker {
 
     private List<Document> parseTags(String tags) {
         List<Document> result = new LinkedList<>();
-
+        if (tags.isEmpty()) {
+            return result;
+        }
         String[] tags_ = tags.split(",");
         for (String tag : tags_) {
             tag = tag.trim();
@@ -197,12 +200,6 @@ public class Worker {
     private boolean moveFiles(String path, String targetPath) {
         List<String> files = FileChecker.getMovies(path);
         return moveFiles(files, targetPath);
-    }
-
-    private boolean moveFiles(String folder, int year, String caption,
-            String category) {
-        List<String> files = FileChecker.getMovies(folder);
-        return moveFiles(files, getTargetPath(year, caption, category));
     }
 
     String getTargetPath(int year, String caption,
@@ -224,16 +221,6 @@ public class Worker {
         }
     }
 
-    private boolean moveFiles(List<String> source, int year, String caption,
-            String category) {
-        if (source.isEmpty()) {
-            return true;
-        }
-
-        String destination = getTargetPath(MIN_CAPTION_SIZE, caption, category);
-        return moveFiles(source, destination);
-    }
-
     private boolean moveFiles(List<String> source, String destinationFolder) {
         insureDestination(destinationFolder);
         try {
@@ -242,8 +229,7 @@ public class Worker {
                 if (Files.exists(path) && Files.isRegularFile(path)) {
                     Path target = Paths.get(destinationFolder + path.getFileName().toString());
                     Files.move(path, target, StandardCopyOption.REPLACE_EXISTING);
-                    String newPath = target.toAbsolutePath().toString();
-                    String shortNewPath = newPath.substring(rootFolder.length());
+                    String shortNewPath = getRelativePath(target);
                     mongoDB.addFile(shortNewPath,
                             FileChecker.getFileHash(target.toString()));
                 }
@@ -301,5 +287,13 @@ public class Worker {
      */
     public String getCreationDate(String folderPath) {
         return FileChecker.getCreationDate(folderPath);
+    }
+
+    private String getRelativePath(Path path) {
+        return getRelativePath(path.toAbsolutePath().toString());
+    }
+
+    private String getRelativePath(String path) {
+        return path.substring(rootFolder.length());
     }
 }
