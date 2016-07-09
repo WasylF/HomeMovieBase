@@ -25,7 +25,21 @@ public class Helper {
      */
     static void openPathInExplorer(Path path, JFrame jFrame) {
         if (!path.toString().isEmpty()
-                && Files.exists(path) && Files.isDirectory(path)) {
+                && Files.exists(path) && !Files.isDirectory(path)) {
+            path = path.getParent();
+        }
+        openPath(path, jFrame);
+    }
+
+    /**
+     * open directory or file (if possible) or return JOptionPane with Error
+     * message
+     *
+     * @param path path that should be opened
+     * @param jFrame form that requested this action
+     */
+    static void openPath(Path path, JFrame jFrame) {
+        if (!path.toString().isEmpty() && Files.exists(path)) {
             try {
                 Desktop desktop = Desktop.getDesktop();
                 desktop.open(path.toFile());
