@@ -61,7 +61,7 @@ public class FileChecker {
                     .filter(Files::isRegularFile)
                     .forEach(filePath -> {
                         for (String dataType : DATA_TYPES) {
-                            if (filePath.toString().endsWith(dataType)) {
+                            if (filePath.toString().toLowerCase().endsWith(dataType)) {
                                 files.add(filePath.toString());
                                 break;
                             }
