@@ -25,7 +25,7 @@ public class MainForm extends javax.swing.JFrame {
         initMyComponents();
     }
 
-    private final void initMyComponents() {
+    private void initMyComponents() {
         rootPathText.setEditable(false);
         workPathText.setEditable(false);
         if (worker.findRootPath()) {
@@ -38,6 +38,18 @@ public class MainForm extends javax.swing.JFrame {
         foundEventList.removeAll();
         foundEventsModel = new DefaultListModel();
         foundEventList.setModel(foundEventsModel);
+
+        eventsNumText.setEditable(false);
+        filesNumText.setEditable(false);
+        updateEventsNum();
+    }
+
+    void updateEventsNum() {
+        long eventsNum = worker.getEventsCount();
+        long filesNum = worker.getFilesCount();
+
+        eventsNumText.setText(String.valueOf(eventsNum));
+        filesNumText.setText(String.valueOf(filesNum));
     }
 
     /**
@@ -57,6 +69,10 @@ public class MainForm extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         foundEventList = new javax.swing.JList<>();
         findEventButton = new javax.swing.JButton();
+        eventsNumLabel = new javax.swing.JLabel();
+        filesNumLabel = new javax.swing.JLabel();
+        eventsNumText = new javax.swing.JTextField();
+        filesNumText = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -114,6 +130,30 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
+        eventsNumLabel.setFont(new java.awt.Font("Times New Roman", 1, 22)); // NOI18N
+        eventsNumLabel.setText(" Событий в базе: ");
+        eventsNumLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        eventsNumLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                eventsNumLabelMouseClicked(evt);
+            }
+        });
+
+        filesNumLabel.setFont(new java.awt.Font("Times New Roman", 1, 22)); // NOI18N
+        filesNumLabel.setText(" Видео в базе: ");
+        filesNumLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        filesNumLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                filesNumLabelMouseClicked(evt);
+            }
+        });
+
+        eventsNumText.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
+        eventsNumText.setText("jTextField1");
+
+        filesNumText.setFont(new java.awt.Font("Times New Roman", 2, 18)); // NOI18N
+        filesNumText.setText("jTextField2");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -124,14 +164,21 @@ public class MainForm extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(rootPathLabel)
-                                    .addComponent(workPathLabel))
+                                    .addComponent(workPathLabel)
+                                    .addComponent(filesNumLabel)
+                                    .addComponent(eventsNumLabel))
                                 .addGap(55, 55, 55)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(workPathText, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-                                    .addComponent(rootPathText))))
+                                    .addComponent(rootPathText)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(eventsNumText, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                                            .addComponent(filesNumText))
+                                        .addGap(0, 0, Short.MAX_VALUE)))))
                         .addGap(20, 20, 20))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(findEventButton)
@@ -140,7 +187,9 @@ public class MainForm extends javax.swing.JFrame {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {rootPathLabel, workPathLabel});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {eventsNumLabel, filesNumLabel, rootPathLabel, workPathLabel});
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {eventsNumText, filesNumText});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -153,18 +202,28 @@ public class MainForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(workPathLabel)
                     .addComponent(workPathText, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29)
-                .addComponent(jScrollPane1)
-                .addGap(31, 31, 31)
+                .addGap(16, 16, 16)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(eventsNumLabel)
+                    .addComponent(eventsNumText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(16, 16, 16)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(filesNumLabel)
+                    .addComponent(filesNumText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addEventButton)
                     .addComponent(findEventButton))
                 .addGap(25, 25, 25))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {rootPathLabel, workPathLabel});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {eventsNumLabel, filesNumLabel, rootPathLabel, workPathLabel});
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {rootPathText, workPathText});
+
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {eventsNumText, filesNumText});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -216,8 +275,24 @@ public class MainForm extends javax.swing.JFrame {
 
     }//GEN-LAST:event_foundEventListMouseClicked
 
+    private void eventsNumLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_eventsNumLabelMouseClicked
+
+        updateEventsNum();
+        
+    }//GEN-LAST:event_eventsNumLabelMouseClicked
+
+    private void filesNumLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_filesNumLabelMouseClicked
+
+        updateEventsNum();
+        
+    }//GEN-LAST:event_filesNumLabelMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addEventButton;
+    private javax.swing.JLabel eventsNumLabel;
+    private javax.swing.JTextField eventsNumText;
+    private javax.swing.JLabel filesNumLabel;
+    private javax.swing.JTextField filesNumText;
     private javax.swing.JButton findEventButton;
     private javax.swing.JList<String> foundEventList;
     private javax.swing.JScrollPane jScrollPane1;
