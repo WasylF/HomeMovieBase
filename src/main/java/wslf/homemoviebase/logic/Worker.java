@@ -208,7 +208,7 @@ public class Worker {
             category = "Разное";
         }
         return rootFolder + "\\" + category + "\\" + year + "\\"
-                + caption + "_0" + random.nextInt(100) + "\\";
+                + caption /*+ "_0" + random.nextInt(100)*/ + "\\";
     }
 
     private void insureDestination(String destination) {
