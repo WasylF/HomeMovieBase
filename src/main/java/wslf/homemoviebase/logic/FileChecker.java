@@ -43,8 +43,9 @@ public class FileChecker {
             Path path = Paths.get(filePath);
             BasicFileAttributes attr;
             attr = Files.readAttributes(path, BasicFileAttributes.class);
-            System.out.println("creationTime: " + attr.creationTime());
-            return attr.creationTime().toString().substring(0, 10);
+            String changeDate = attr.lastModifiedTime().toString().substring(0, 10);
+            String createDate = attr.creationTime().toString().substring(0, 10);
+            return (changeDate.compareTo(createDate) <= 0) ? changeDate : createDate;
         } catch (IOException ex) {
             Logger.getLogger(FileChecker.class.getName()).log(Level.SEVERE, null, ex);
         }
