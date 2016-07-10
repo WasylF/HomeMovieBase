@@ -296,4 +296,12 @@ public class Worker {
     private String getRelativePath(String path) {
         return path.substring(rootFolder.length());
     }
+
+    public long getEventsCount() {
+        return mongoDB.getEventsCount();
+    }
+
+    public long getFilesCount() {
+        return mongoDB.getFilesCount();
+    }
 }

@@ -164,4 +164,12 @@ public class MongoDB {
         }
         return new LinkedList<>();
     }
+
+    public long getEventsCount() {
+        return events.count();
+    }
+
+    public long getFilesCount() {
+        return files.count();
+    }
 }
