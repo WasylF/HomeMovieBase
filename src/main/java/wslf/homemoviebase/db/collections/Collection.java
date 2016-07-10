@@ -90,4 +90,12 @@ public abstract class Collection {
             System.out.println(doc.toJson());
         }
     }
+
+    /**
+     * 
+     * @return number of items in collection
+     */
+    public long count() {
+        return collection.count();
+    }
 }
