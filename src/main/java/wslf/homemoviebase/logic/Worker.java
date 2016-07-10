@@ -59,7 +59,7 @@ public class Worker {
      * Looking for the similar files that alredy in the db
      *
      * @param folderPath path to folder, that stored video files
-     * @return dublicats: List of pairs<input file path, same file in db path>
+     * @return dublicats: List of pairs[input file path, same file in db path]
      */
     public LinkedList<Pair<String, String>> checkEvent(String folderPath) {
         return fileChecker.check(folderPath, rootFolder);

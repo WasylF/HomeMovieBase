@@ -78,7 +78,7 @@ public class FileChecker {
      *
      * @param folderPath path to folder, that stored video files
      * @param rootFolder root folder, that contain all movies from the DB
-     * @return dublicats: List of pairs<input file path, same file in db path>
+     * @return dublicats: List of pairs [input file path, same file in db path]
      */
     public LinkedList<Pair<String, String>> check(String folderPath,
             String rootFolder) {
@@ -90,7 +90,7 @@ public class FileChecker {
      * Looking for the similar files that alredy in the db
      *
      * @param files list of pathes to files thats needs to be checked
-     * @return dublicats: List of pairs<input file path, same file in db path>
+     * @return dublicats: List of pairs[input file path, same file in db path]
      */
     private LinkedList<Pair<String, String>> check(List<String> files) {
         LinkedList<Pair<String, String>> dublicats = new LinkedList<>();
