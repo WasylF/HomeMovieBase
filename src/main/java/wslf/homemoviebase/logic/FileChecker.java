@@ -1,7 +1,11 @@
 package wslf.homemoviebase.logic;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -129,13 +133,13 @@ public class FileChecker {
     }
 
     /**
-     * chech do files identical
+     * check are files identical
      *
      * @param file1 path to the first file
      * @param file2 path to the second file
-     * @return true if files are similar
+     * @return true if files are the same
      */
-    boolean isSameContent(Path file1, Path file2) {
+    public static boolean isSameContent(Path file1, Path file2) {
         try {
             long size = Files.size(file1);
             if (size != Files.size(file2)) {
@@ -146,20 +150,62 @@ public class FileChecker {
                 return Arrays.equals(Files.readAllBytes(file1), Files.readAllBytes(file2));
             }
 
-            try (InputStream is1 = Files.newInputStream(file1);
-                    InputStream is2 = Files.newInputStream(file2)) {
-                int data;
-                while ((data = is1.read()) != -1) {
-                    if (data != is2.read()) {
-                        return false;
-                    }
-                }
-            }
+            return compareLarge(file1, file2, MY_BUFFER_SIZE);
         } catch (IOException ex) {
             System.err.println("File compare error!\n" + ex.toString());
             return false;
         }
+    }
 
+    static boolean compareLarge(Path firstPath, Path secondPath, final int BUFFER_SIZE) throws IOException {
+        SeekableByteChannel firstIn = null, secondIn = null;
+        try {
+            firstIn = Files.newByteChannel(firstPath);
+            secondIn = Files.newByteChannel(secondPath);
+            if (firstIn.size() != secondIn.size()) {
+                return false;
+            }
+            ByteBuffer firstBuffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
+            ByteBuffer secondBuffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
+            int firstRead, secondRead;
+            while (firstIn.position() < firstIn.size()) {
+                firstRead = firstIn.read(firstBuffer);
+                secondRead = secondIn.read(secondBuffer);
+                if (firstRead != secondRead) {
+                    return false;
+                }
+                if (!buffersEqual(firstBuffer, secondBuffer, firstRead)) {
+                    return false;
+                }
+            }
+            return true;
+        } finally {
+            if (firstIn != null) {
+                firstIn.close();
+            }
+            if (secondIn != null) {
+                secondIn.close();
+            }
+        }
+    }
+
+    private static boolean buffersEqual(ByteBuffer first, ByteBuffer second, final int length) {
+        if (first.limit() != second.limit() || length > first.limit()) {
+            return false;
+        }
+        first.rewind();
+        second.rewind();
+        int i;
+        for (i = 0; i < length - 7; i += 8) {
+            if (first.getLong() != second.getLong()) {
+                return false;
+            }
+        }
+        for (; i < length; i++) {
+            if (first.get() != second.get()) {
+                return false;
+            }
+        }
         return true;
     }
 }
