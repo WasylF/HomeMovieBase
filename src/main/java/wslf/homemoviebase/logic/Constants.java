@@ -2,14 +2,15 @@ package wslf.homemoviebase.logic;
 
 /**
  *
- * @author WslF
+ * @author Wsl_F
  */
 public class Constants {
 
     /**
      * types of common video files
      */
-    public static final String[] DATA_TYPES = {"avi", "mpg", "mpeg", "mp4", "3gp"};
+    public static final String[] DATA_TYPES = {"avi", "mpg", "mpeg", "mp4",
+        "3gp", "mts", "wmv"};
     /**
      * Maximum files size to load whole it to the RAM. in bytes
      */
