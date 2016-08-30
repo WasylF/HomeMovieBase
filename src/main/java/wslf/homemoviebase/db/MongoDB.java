@@ -3,8 +3,11 @@ package wslf.homemoviebase.db;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bson.Document;
 import wslf.homemoviebase.db.collections.*;
 
@@ -171,5 +174,37 @@ public class MongoDB {
 
     public long getFilesCount() {
         return files.count();
+    }
+
+    /**
+     *
+     * @param path path for backUp
+     * @return successfulness of creating backUp
+     */
+    public boolean makeBackUp(String path) {
+        try {
+            Runtime.getRuntime().exec("mongodump --out " + path);
+            return true;
+        } catch (IOException ex) {
+            Logger.getLogger(MongoDB.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("DB backUp creating error!");
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @param backUpPath path of the backUp
+     * @return successfulness of restoring from the backUp
+     */
+    public boolean restore(String backUpPath) {
+        try {
+            Runtime.getRuntime().exec("mongorestore " + backUpPath);
+            return true;
+        } catch (IOException ex) {
+            Logger.getLogger(MongoDB.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("restoring DB error!");
+        }
+        return false;
     }
 }

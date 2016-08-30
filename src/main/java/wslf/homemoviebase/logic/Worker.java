@@ -304,4 +304,22 @@ public class Worker {
     public long getFilesCount() {
         return mongoDB.getFilesCount();
     }
+
+    /**
+     *
+     * @param path path for backUp
+     * @return successfulness of creating backUp
+     */
+    public boolean makeBackUp(String path) {
+        return mongoDB.makeBackUp(path);
+    }
+
+    /**
+     *
+     * @param path path of the backUp
+     * @return successfulness of restoring from the backUp
+     */
+    public boolean restore(String path) {
+        return mongoDB.restore(path);
+    }
 }
